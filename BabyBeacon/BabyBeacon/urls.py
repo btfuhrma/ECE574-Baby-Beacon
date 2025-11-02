@@ -16,7 +16,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from sensors.views import *
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('api/data/', sensorData, name='sensorData'),
+    path('api/getToken/', getToken, name='userAPIKey'),
 ]
