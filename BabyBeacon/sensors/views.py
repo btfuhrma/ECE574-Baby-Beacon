@@ -1,8 +1,10 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 import json
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from .models import SensorData, UserAPIKey
+from django.contrib.auth import authenticate, login as auth_login
+from django.contrib.auth.models import User
 
 # Create your views here.
 @csrf_exempt
@@ -41,5 +43,56 @@ def getToken(request):
         return JsonResponse({'api_key': api_key.key})
     return JsonResponse({'api_key': None})
 
-def index(request):
-    return render(request, 'sensors/index.html')
+def user_login(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+
+        user = authenticate(request, username=username, password=password)
+        print(username + " " + password)
+        if user is not None:
+            print("test")
+            auth_login(request, user)
+
+            api_key, created = UserAPIKey.objects.get_or_create(user=user)
+            api_key.active = True
+            api_key.save()
+
+            return redirect('dashboard')
+        else:
+            return render(request, 'users/login.html', {'error': 'Invalid credentials'})
+    return render(request, 'users/login.html')
+
+
+
+def signup(request):
+    if request.method == 'POST':
+        username = request.POST.get('username', '').strip()
+        password = request.POST.get('password', '').strip()
+
+        user = User.objects.create_user(username=username, password=password)
+        user.save()
+
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            auth_login(request, user)
+
+            api_key, created = UserAPIKey.objects.get_or_create(user=user)
+            api_key.active = True
+            api_key.save()
+
+            return redirect('dashboard')  
+
+    return render(request, 'users/signup.html')
+
+def logout(request):
+    from django.contrib.auth import logout as auth_logout
+    if request.user.is_authenticated:
+        UserAPIKey.objects.filter(user=request.user).update(active=False)
+    auth_logout(request)
+    return redirect('user_login')
+
+def dashboard(request):
+    if not request.user.is_authenticated:
+        return redirect('user_login')
+    return render(request, 'sensors/dashboard.html')

@@ -22,5 +22,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/data/', sensorData, name='sensorData'),
     path('api/getToken/', getToken, name='userAPIKey'),
-    path('', index, name='index')
+    path('user_login', user_login, name='user_login'),
+    path('signup', signup, name='signup'),
+    path('logout', logout, name='logout'),
+    path('dashboard', dashboard, name='dashboard'),
 ]
