@@ -22,4 +22,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/data/', sensorData, name='sensorData'),
     path('api/getToken/', getToken, name='userAPIKey'),
+    path('', index, name='index')
 ]

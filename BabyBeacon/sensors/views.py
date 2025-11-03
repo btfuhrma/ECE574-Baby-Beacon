@@ -40,3 +40,6 @@ def getToken(request):
     if api_key:
         return JsonResponse({'api_key': api_key.key})
     return JsonResponse({'api_key': None})
+
+def index(request):
+    return render(request, 'sensors/index.html')
