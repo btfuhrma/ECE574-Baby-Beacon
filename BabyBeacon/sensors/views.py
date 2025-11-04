@@ -34,7 +34,6 @@ def sensorData(request):
         amplitude=amp
     )
     return JsonResponse({'status': 'success'})
-    return
 
 def getToken(request):
     api_key = UserAPIKey.objects.filter(active=True).first()
@@ -49,9 +48,7 @@ def user_login(request):
         password = request.POST.get('password')
 
         user = authenticate(request, username=username, password=password)
-        print(username + " " + password)
         if user is not None:
-            print("test")
             auth_login(request, user)
 
             api_key, created = UserAPIKey.objects.get_or_create(user=user)
@@ -68,7 +65,7 @@ def user_login(request):
 def signup(request):
     if request.method == 'POST':
         username = request.POST.get('username', '').strip()
-        password = request.POST.get('password', '').strip()
+        password = request.POST.get('password1', '').strip()
 
         user = User.objects.create_user(username=username, password=password)
         user.save()
