@@ -11,7 +11,7 @@
 
 const uint8_t MPU_ADDR = 0x68;
 
-const char* serverURL = "http://127.0.0.1:8000/data";
+const char* serverURL = "http://127.0.0.1:8000/api/data";
 
 void sendData(float temperature, float amplitude) {
   if (WiFi.status() == WL_CONNECTED) {

@@ -26,4 +26,5 @@ urlpatterns = [
     path('signup', signup, name='signup'),
     path('logout', logout, name='logout'),
     path('dashboard', dashboard, name='dashboard'),
+    path('api/getLatestData/', getLatestData, name='getLatestData'),
 ]

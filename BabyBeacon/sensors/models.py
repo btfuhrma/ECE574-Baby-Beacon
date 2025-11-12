@@ -5,7 +5,7 @@ import secrets
 
 # Create your models here.
 class SensorData(models.Model):
-    device = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     temperature_c = models.FloatField()
     amplitude = models.FloatField()
     timestamp = models.DateTimeField(auto_now_add=True)

@@ -33,6 +33,7 @@ def sensorData(request):
         temperature_c=temp,
         amplitude=amp
     )
+    print(temp, amp, user_api.user.username)
     return JsonResponse({'status': 'success'})
 
 def getToken(request):
@@ -60,7 +61,25 @@ def user_login(request):
             return render(request, 'users/login.html', {'error': 'Invalid credentials'})
     return render(request, 'users/login.html')
 
+def getLatestData(request):
+    if not request.user.is_authenticated:
+        return JsonResponse({'error': 'Unauthorized'}, status=401)
 
+    latest_data = SensorData.objects.filter(user=request.user).order_by('-timestamp').first()
+    history = SensorData.objects.filter(user=request.user).order_by('-timestamp')[:20][::-1]
+    if latest_data:
+        data = {
+            'temperature_c': latest_data.temperature_c,
+            'amplitude': latest_data.amplitude,
+            'threshold_temp': 30,  # you can make these configurable
+            'threshold_amp': 8,
+            'temp_history': [d.temperature_c for d in history],
+            'amp_history': [d.amplitude for d in history],
+            'labels': [d.timestamp.strftime('%H:%M') for d in history]
+        }
+        return JsonResponse(data)
+    else:
+        return JsonResponse({'error': 'No data found'}, status=404)
 
 def signup(request):
     if request.method == 'POST':
