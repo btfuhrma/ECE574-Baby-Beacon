@@ -7,123 +7,269 @@
     <title>Baby Beacon — Login</title>
     <style>
         :root{
-            --bg:#f6fbff; --card:#ffffff; --accent:#3b82f6; --muted:#6b7280;
-            --danger:#ef4444; font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+            --bg:#b8e5f3f6; --card:#ffffff; --accent:#051838; --muted:#0f1b35;
+            --danger:#ef4444;
+            font-family: Inter, "Segoe UI", Roboto, "Helvetica Neue", Arial;
         }
-        body{margin:0; min-height:100vh; display:flex; align-items:center; justify-content:center; background:linear-gradient(180deg,#eef8ff 0%,var(--bg) 100%);}
-        .wrap{width:100%; max-width:980px; margin:48px; display:grid; grid-template-columns:1fr 420px; gap:28px; align-items:center;}
-        .hero{padding:40px; background:transparent;}
-        .brand{display:flex; align-items:center; gap:14px; margin-bottom:18px;}
-        .logo{
-            width:56px; height:56px; border-radius:12px; background:linear-gradient(135deg,#60a5fa,#6366f1); display:flex; align-items:center; justify-content:center; color:white; font-weight:700; font-size:20px;
-            box-shadow: 0 8px 24px rgba(59,130,246,0.12);
+
+        body{
+            margin: 0;
+            min-height: 100vh;
+            background: linear-gradient(180deg,#eef8ff 0%,var(--bg) 100%);
         }
-        h1{margin:0; font-size:28px; color:#0f172a;}
-        p.lead{margin:10px 0 0; color:var(--muted); max-width:46ch;}
-        .features{display:flex; gap:14px; margin-top:26px; flex-wrap:wrap;}
-        .feature{background:linear-gradient(180deg,#fff,#fbfdff); border-radius:12px; padding:12px 14px; display:flex; gap:10px; align-items:center; box-shadow:0 6px 18px rgba(2,6,23,0.04);}
-        .feature svg{width:28px;height:28px; color:#ef4444}
-        .card{background:var(--card); border-radius:14px; padding:28px; box-shadow:0 12px 40px rgba(2,6,23,0.06);}
-        form{display:flex; flex-direction:column; gap:12px;}
-        label{font-size:13px; color:var(--muted); margin-bottom:6px;}
-        input[type="text"], input[type="password"], input[type="email"]{
-            padding:12px 14px; border-radius:10px; border:1px solid #e6edf8; background:#fff; outline:none;
-            box-shadow:inset 0 1px 0 rgba(16,24,40,0.02);
+
+        /* Top title + logo */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            padding: 24px 0;
         }
-        .actions{display:flex; justify-content:space-between; align-items:center; gap:12px; margin-top:6px;}
-        .btn{background:var(--accent); color:white; border:none; padding:10px 14px; border-radius:10px; cursor:pointer;}
-        .btn.secondary{background:#f3f4f6; color:#0f172a;}
-        .meta{font-size:13px; color:var(--muted);}
-        .msg{padding:10px;border-radius:8px;background:#fff4f4;color:var(--danger); border:1px solid rgba(239,68,68,0.12); margin-bottom:8px;}
-        .help{font-size:13px;color:var(--muted); margin-top:8px;}
-        @media (max-width:880px){ .wrap{grid-template-columns:1fr; padding:20px;} .hero{order:2} .card{order:1} }
+
+        .header .logo {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg,#60a5fa,#6366f1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            font-weight: 700;
+            font-size: 28px;
+            color: #0f172a;
+            margin: 0;
+        }
+
+        /* Main container */
+        .page-container {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 40px;
+            padding: 20px;
+            flex-wrap: wrap;
+        }
+
+        /* Baby image */
+        .baby-img {
+            height: 80vh;
+            width: auto;
+            border-radius: 20px;
+            object-fit: cover;
+            box-shadow: 0 8px 24px rgba(172, 8, 8, 0.1); 
+        
+        }
+
+        /* Login card */
+        .login-card {
+            background: var(--card);
+            border-radius: 10px;
+            padding: 28px;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.06);
+            width: 380px;
+        }
+
+        .login-card h2 {
+            margin: 0 0 16px 0;
+            font-size: 22px;
+            color: #0f172a;
+        }
+
+        .login-card form {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .login-card label {
+            font-size: 13px;
+            color: var(--muted);
+            margin-bottom: 6px;
+        }
+
+        .login-card input[type="text"],
+        .login-card input[type="password"] {
+            padding: 12px 14px;
+            border-radius: 10px;
+            border: 1px solid #e6edf8;
+            outline: none;
+            background: #fff;
+            box-shadow: inset 0 1px 0 rgba(16,24,40,0.02);
+        }
+
+        .btn {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 10px 14px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .btn.secondary {
+            background: #f3f4f6;
+            color: #0f172a;
+        }
+
+        .msg {
+            padding: 10px;
+            border-radius: 8px;
+            background: #aa2323;
+            color: var(--danger);
+            border: 1px solid rgba(239,68,68,0.12);
+            margin-bottom: 8px;
+            text-align: center;
+        }
+
+        /* Responsive */
+        @media(max-width: 880px) {
+            .page-container {
+                flex-direction: column;
+                align-items: center;
+            }
+            .baby-img {
+                width: 80%;
+                margin-bottom: 24px;
+            }
+        }
+        .features {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+}
+
+.feature {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    background: linear-gradient(180deg,#fff,#fbfdff);
+    border-radius: 12px;
+    padding: 10px 14px;
+    box-shadow: 0 6px 18px rgba(2,6,23,0.04);
+}
+
+.feature svg {
+    width: 28px;
+    height: 28px;
+}
+
+.feature-title {
+    font-weight: 600;
+    font-size: 14px;
+    color: #0f172a;
+}
+
+.feature-desc {
+    font-size: 12px;
+    color: var(--muted);
+}
+.msg {
+    padding: 10px;
+    border-radius: 8px;
+    background: #fff4f4;
+    color: #ef4444;
+    border: 1px solid rgba(239,68,68,0.2);
+    margin-bottom: 10px;
+    text-align: center;
+}
     </style>
 </head>
 <body>
-    <main class="wrap">
-        <section class="hero">
-            <div class="brand">
-                <div class="logo">BB</div>
-                <div>
-                    <div style="font-size:15px;color:var(--muted);">Baby Beacon</div>
-                    <div style="font-weight:600">Temperature & Sound Monitor</div>
-                </div>
-            </div>
+     
+    <!-- Header with logo and title -->
+    <div class="header">
+        <div class="logo">BB</div>
+        <h1>Baby Beacon - Temperature & Sound Monitor</h1>
+    </div>
 
-            <h1>Welcome back</h1>
-            <p class="lead">Sign in to monitor your little one — view live temperature trends and sound alerts from anywhere.</p>
+    <!-- Main content -->
+    <div class="page-container">
+        <!-- Baby picture -->
+        <img class="baby-img" src="{% static 'images/baby.png' %}" alt="Baby Picture">
 
-            <div class="features" aria-hidden="true">
-                <div class="feature">
-                    <svg viewBox="0 0 24 24" fill="none" style="color:#ef4444" xmlns="http://www.w3.org/2000/svg"><path d="M12 3v9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M8 21h8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M5.5 15a6.5 6.5 0 0113 0" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                    <div>
-                        <div style="font-weight:600">Temperature tracking</div>
-                        <div style="font-size:13px;color:var(--muted)">Live ambient and body temperature readings.</div>
-                    </div>
-                </div>
+<div class="login-section">
+        <!-- Lead paragraph -->
+        <p class="lead">
+            Sign in to monitor your little one — view live temperature trends and sound alerts from anywhere
+        </p>
+<!-- Features section -->
+<div class="features" aria-hidden="true">
+    <!-- Temperature tracking -->
+    <div class="feature">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 3v9" stroke="#ef4444" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M8 21h8" stroke="#ef4444" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M5.5 15a6.5 6.5 0 0113 0" stroke="#ef4444" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <div>
+            <div class="feature-title">Temperature Tracking</div>
+            <div class="feature-desc">Live ambient and body temperature readings.</div>
+        </div>
+    </div>
 
-                <div class="feature">
-                    <svg viewBox="0 0 24 24" fill="none" style="color:#06b6d4" xmlns="http://www.w3.org/2000/svg"><path d="M3 12c3 0 5-3 9-3s6 3 9 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M4.5 19c3-1 5-4 7.5-4s4.5 3 7.5 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                    <div>
-                        <div style="font-weight:600">Sound alerts</div>
-                        <div style="font-size:13px;color:var(--muted)">Get notified on cry detection and high noise levels.</div>
-                    </div>
-                </div>
-            </div>
-        </section>
+    <!-- Sound alerts -->
+    <div class="feature">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M3 12c3 0 5-3 9-3s6 3 9 3" stroke="#06b6d4" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M4.5 19c3-1 5-4 7.5-4s4.5 3 7.5 4" stroke="#06b6d4" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <div>
+            <div class="feature-title">Sound Alerts</div>
+            <div class="feature-desc">Get notified on cry detection and high noise levels.</div>
+        </div>
+    </div>
+</div>
 
-        <aside class="card" aria-labelledby="login-heading">
-            <h2 id="login-heading" style="margin:0 0 8px 0">Sign in</h2>
+
+        <!-- Login card -->
+        <div class="login-card">
+            <h2>Sign In</h2>
 
             {% if messages %}
+                 <div>Messages exissssssst!</div>
                 {% for message in messages %}
                     <div class="msg">{{ message }}</div>
+                     
                 {% endfor %}
             {% endif %}
 
-            {% comment %} Prefer Django's AuthenticationForm if provided, otherwise fallback to manual fields {% endcomment %}
+ {% comment %} Prefer Django's AuthenticationForm if provided, otherwise fallback to manual fields {% endcomment %}
+            
+
+
             <form method="post" action="{% url 'user_login' %}">
                 {% csrf_token %}
 
-                {% if request.GET.next %}
-                    <input type="hidden" name="next" value="{{ request.GET.next }}">
-                {% endif %}
+                <label for="id_username">Username</label>
+                <input id="id_username" name="username" type="text" required value="{{ request.POST.username|default:'' }}">
 
-                {% if form %}
-                    {% if form.non_field_errors %}
-                        <div class="msg">{{ form.non_field_errors }}</div>
-                    {% endif %}
-                    <div>
-                        <label for="{{ form.username.id_for_label }}">Username or Email</label>
-                        {{ form.username }}
-                        {% if form.username.errors %}<div class="msg" style="background:#fff7ed;color:#92400e;border-color:rgba(252,165,0,0.08)">{{ form.username.errors }}</div>{% endif %}
-                    </div>
+                <label for="id_password">Password</label>
+                <input id="id_password" name="password" type="password" required>
 
-                    <div>
-                        <label for="{{ form.password.id_for_label }}">Password</label>
-                        {{ form.password }}
-                        {% if form.password.errors %}<div class="msg">{{ form.password.errors }}</div>{% endif %}
-                    </div>
-                {% else %}
-                    <div>
-                        <label for="id_username">Username or Email</label>
-                        <input id="id_username" name="username" type="text" required value="{{ request.POST.username|default:'' }}">
-                    </div>
+                <button type="submit" class="btn">Sign In</button>
+                <a class="btn secondary" href="{% url 'signup' %}">Create Account</a>
 
-                    <div>
-                        <label for="id_password">Password</label>
-                        <input id="id_password" name="password" type="password" required>
-                    </div>
-                {% endif %}
 
-                <div style="display:flex;gap:8px;margin-top:8px">
-                    <button class="btn" type="submit">Sign in</button>
-                    <a class="btn secondary" href="{% url 'signup' %}">Create account</a>
-                </div>
 
+             
                 <p class="help">By signing in you can access live feeds, configure alerts, and review historical temperature and sound logs.</p>
             </form>
-        </aside>
-    </main>
+
+
+             
+        </div>
+    </div>
+    </div>
 </body>
-</html></div>
+</html>

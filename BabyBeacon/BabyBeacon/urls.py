@@ -17,14 +17,16 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from sensors.views import *
+from django.shortcuts import redirect
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/data/', sensorData, name='sensorData'),
     path('api/getToken/', getToken, name='userAPIKey'),
-    path('user_login', user_login, name='user_login'),
-    path('signup', signup, name='signup'),
-    path('logout', logout, name='logout'),
-    path('dashboard', dashboard, name='dashboard'),
+    path('user_login/', user_login, name='user_login'),   # <-- trailing slash added
+    path('signup/', signup, name='signup'),              # good to add slash
+    path('logout/', logout, name='logout'),             # good to add slash
+    path('dashboard/', dashboard, name='dashboard'),   
     path('api/getLatestData/', getLatestData, name='getLatestData'),
+    path('', lambda request: redirect('user_login/')),
 ]
