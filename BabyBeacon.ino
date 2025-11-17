@@ -11,36 +11,86 @@
 
 const uint8_t MPU_ADDR = 0x68;
 
+String API_KEY = "";
+
 const char* serverURL = "http://127.0.0.1:8000/api/data";
 
 void sendData(float temperature, float amplitude) {
-  if (WiFi.status() == WL_CONNECTED) {
+  if (WiFi.status() == WL_CONNECTED && API_KEY != "") {
+
     HTTPClient http;
     http.begin(serverURL);
     http.addHeader("Content-Type", "application/json");
 
-    String payload = "{\"temperature\":" + String(temperature, 2) +
-                     ",\"amplitude\":" + String(amplitude, 2) + "}";
+    String payload = "{\"api_key\":\"" + API_KEY +
+                     "\",\"temperature\":" + String(temperature, 2) +
+                     ",\"amplitude\":" + String(amplitude, 8) + "}";
 
-    int httpResponseCode = http.POST(payload);
+    int response = http.POST(payload);
 
-    if (httpResponseCode > 0) {
-      Serial.print("POST Response: ");
-      Serial.println(httpResponseCode);
-    } else {
-      Serial.print("Error: ");
-      Serial.println(httpResponseCode);
-    }
+    Serial.print("POST status: ");
+    Serial.println(response);
 
     http.end();
-  } else {
-    Serial.println("WiFi disconnected.");
   }
 }
 
+
+String fetchAPIKey() {
+    HTTPClient http;
+    http.begin("http://127.0.0.1:8000/api/getToken");
+
+    int code = http.GET();
+    if (code != 200) {
+        Serial.println("Failed to fetch API key");
+        return "";
+    }
+
+    String response = http.getString();
+    Serial.println("Raw key response: " + response);
+
+    int start = response.indexOf("\"api_key\":\"");
+    if (start == -1) return "";
+
+    start += 11;
+
+    int end = response.indexOf("\"", start);
+    if (end == -1) return "";
+
+    String key = response.substring(start, end);
+    return key;
+}
+
+
 void setup() {
-  WiFi.begin(WIFI_SSID, WIFI_PASS);
+  // WiFi.begin(WIFI_SSID, WIFI_PASS);
   Serial.begin(115200);
+
+  Serial.println("Connecting to WiFi...");
+
+  WiFi.begin(WIFI_SSID, WIFI_PASS);
+  int attempts = 0;
+
+  while (WiFi.status() != WL_CONNECTED) {
+      delay(500);
+      Serial.print(".");
+      attempts++;
+
+      if (attempts > 40) {
+          Serial.println("\nFailed to connect to WiFi. Restarting...");
+          ESP.restart();
+      }
+  }
+  Serial.println("\nWiFi connected!");
+  Serial.print("IP Address: ");
+  Serial.println(WiFi.localIP());
+
+  while (API_KEY == "") {
+      Serial.println("Fetching API key...");
+      API_KEY = fetchAPIKey();
+      delay(1000);
+  }
+  Serial.println("API Key loaded: " + API_KEY);
 
   // Wake up MPU6050 (it starts in sleep mode)
   Wire.beginTransmission(MPU_ADDR);
@@ -77,9 +127,8 @@ void setup() {
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
   Wire.beginTransmission(MPU_ADDR);
-  Wire.write(0x41);  // Starting register for temperature
+  Wire.write(0x41);
   Wire.endTransmission(false);
   Wire.requestFrom(MPU_ADDR, 2, true);
 
@@ -97,14 +146,14 @@ void loop() {
   int sampleCount = bytesRead / sizeof(int32_t);
   double avgAmplitude = 0;
   for (int i = 0; i < sampleCount; i++) {
-    avgAmplitude += abs(samples[i] >> 14); // scale down 32-bit
+    avgAmplitude += abs(samples[i] >> 14);
   }
   avgAmplitude /= sampleCount;
 
   Serial.print("Average Amplitude: ");
-  Serial.print(avgAmplitude);
+  Serial.print(tempAmp);
 
   sendData(temperatureC, avgAmplitude);
 
-  delay(500);
+  delay(1000);
 }
