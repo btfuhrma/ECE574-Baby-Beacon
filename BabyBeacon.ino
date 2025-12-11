@@ -13,6 +13,7 @@ const uint8_t MPU_ADDR = 0x68;
 
 String API_KEY = "";
 
+// Replace address with deployed server address or host computers IPV4 address
 const char* serverURL = "http://127.0.0.1:8000/api/data";
 
 void sendData(float temperature, float amplitude) {
@@ -38,6 +39,7 @@ void sendData(float temperature, float amplitude) {
 
 String fetchAPIKey() {
     HTTPClient http;
+    // Replace address with deployed server address or host computers IPV4 address
     http.begin("http://127.0.0.1:8000/api/getToken");
 
     int code = http.GET();
