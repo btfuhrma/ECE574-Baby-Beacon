@@ -1,0 +1,105 @@
+{% block content %}
+<div class="min-h-screen bg-gray-50 text-gray-800">
+  <nav class="shadow" style="background:#0f172a; color: white; padding: 10px 20px;">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
+      <h1 class="text-2xl font-semibold">BabyBeacon Statistics</h1>
+      <div class="flex space-x-4">
+        <a href="{% url 'statistics' %}" class="hover:underline">Statistics</a>
+        <a href="{% url 'dashboard' %}" class="hover:underline">Dashboard</a>
+        <a href="{% url 'logout' %}" class="hover:underline">Logout</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="max-w-7xl mx-auto px-4 py-6 space-y-6">
+
+    {% if error %}
+      <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded" role="alert">
+        {{ error }}
+      </div>
+    {% else %}
+
+    <form method="get" class="bg-white shadow-md rounded-lg p-4 flex space-x-4 items-center">
+      <label for="tempThreshold" class="text-gray-700 font-medium">Temp Threshold:</label>
+      <input id="tempThreshold" name="temp_threshold" type="number" value="{{ current_temp_threshold|default:30 }}" min="0" step="0.1" class="border rounded px-2 py-1 w-20">
+
+      <label for="ampThreshold" class="text-gray-700 font-medium">Amp Threshold:</label>
+      <input id="ampThreshold" name="amp_threshold" type="number" value="{{ current_amp_threshold|default:8 }}" min="0" step="0.1" class="border rounded px-2 py-1 w-20">
+
+      <button type="submit" class="bg-blue-600 text-white px-4 py-1 rounded">Update</button>
+    </form>
+
+    <div class="grid grid-cols-3 gap-4 mt-4">
+      <div class="bg-white shadow-md rounded-lg p-6 text-center">
+        <h2 class="text-gray-500 text-sm uppercase">Max Amplitude</h2>
+        <p class="text-3xl font-semibold text-green-600">{{ max_amp }}</p>
+      </div>
+      <div class="bg-white shadow-md rounded-lg p-6 text-center">
+        <h2 class="text-gray-500 text-sm uppercase">Number of Spikes</h2>
+        <p class="text-3xl font-semibold text-blue-600">{{ num_spikes }}</p>
+      </div>
+      <div class="bg-white shadow-md rounded-lg p-6 text-center">
+        <h2 class="text-gray-500 text-sm uppercase">Avg Time Between Spikes (s)</h2>
+        <p class="text-3xl font-semibold text-purple-600">
+          {% if avg_time_between_spikes %}{{ avg_time_between_spikes|floatformat:2 }}{% else %}N/A{% endif %}
+        </p>
+      </div>
+    </div>
+
+    <div class="bg-white shadow-md rounded-lg p-6 mt-6">
+      <h2 class="text-gray-700 font-semibold mb-3">Most Recent Readings</h2>
+      <table id="recentSpikesTable" class="w-full table-auto border-collapse border border-gray-300">
+        <thead>
+          <tr class="bg-gray-100">
+            <th class="border px-2 py-1">Timestamp</th>
+            <th class="border px-2 py-1">Temperature (°C)</th>
+            <th class="border px-2 py-1">Amplitude</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for spike in recent_spikes %}
+          <tr>
+            <td class="border px-2 py-1">{{ spike.timestamp|date:"H:i:s" }}</td>
+            <td class="border px-2 py-1">{{ spike.temperature_c }}</td>
+            <td class="border px-2 py-1">{{ spike.amplitude }}</td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td class="border px-2 py-1 text-center" colspan="3">No recent readings</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.tailwindcss.com"></script>
+
+<script>
+function updateHighlights() {
+  const tempThreshold = parseFloat(document.getElementById('tempThreshold').value);
+  const ampThreshold = parseFloat(document.getElementById('ampThreshold').value);
+
+  document.querySelectorAll('#recentSpikesTable tbody tr').forEach(row => {
+    const temp = parseFloat(row.cells[1].textContent);
+    const amp = parseFloat(row.cells[2].textContent);
+    if (!isNaN(temp) && !isNaN(amp) && (temp >= tempThreshold || amp >= ampThreshold)) {
+      row.classList.add('bg-red-100');
+    } else {
+      row.classList.remove('bg-red-100');
+    }
+  });
+}
+
+updateHighlights();
+
+document.getElementById('tempThreshold').addEventListener('input', updateHighlights);
+document.getElementById('ampThreshold').addEventListener('input', updateHighlights);
+</script>
+
+{% endblock %}

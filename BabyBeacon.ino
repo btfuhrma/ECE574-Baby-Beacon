@@ -6,8 +6,8 @@
 #include <HTTPClient.h>
 
 #define I2S_WS   2    // J3 pin 13 (LRCLK)
-#define I2S_SCK  4    // J3 pin 14 (BCLK)
-#define I2S_SD   38   // J3 pin 10 (DOUT from mic)
+#define I2S_SCK  3    // J3 pin 14 (BCLK)
+#define I2S_SD   39   // J3 pin 10 (DOUT from mic)
 
 const uint8_t MPU_ADDR = 0x68;
 
@@ -93,6 +93,7 @@ void setup() {
   Serial.println("API Key loaded: " + API_KEY);
 
   // Wake up MPU6050 (it starts in sleep mode)
+  Wire.begin();
   Wire.beginTransmission(MPU_ADDR);
   Wire.write(0x6B);Wire.write(0);
   Wire.endTransmission(true);
@@ -103,7 +104,7 @@ void setup() {
       .mode = i2s_mode_t(I2S_MODE_MASTER | I2S_MODE_RX),
       .sample_rate = 16000,
       .bits_per_sample = I2S_BITS_PER_SAMPLE_32BIT,
-      .channel_format = I2S_CHANNEL_FMT_ONLY_LEFT,
+      .channel_format = I2S_CHANNEL_FMT_ONLY_RIGHT,
       .communication_format = i2s_comm_format_t(I2S_COMM_FORMAT_I2S),
       .intr_alloc_flags = 0,
       .dma_buf_count = 8,
@@ -151,7 +152,7 @@ void loop() {
   avgAmplitude /= sampleCount;
 
   Serial.print("Average Amplitude: ");
-  Serial.print(tempAmp);
+  Serial.println(avgAmplitude);
 
   sendData(temperatureC, avgAmplitude);
 

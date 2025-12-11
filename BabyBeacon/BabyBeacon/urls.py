@@ -29,4 +29,5 @@ urlpatterns = [
     path('dashboard/', dashboard, name='dashboard'),   
     path('api/getLatestData/', getLatestData, name='getLatestData'),
     path('', lambda request: redirect('user_login/')),
+    path('statistics/', statistics, name='statistics'),
 ]

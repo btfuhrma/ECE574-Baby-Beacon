@@ -1,20 +1,19 @@
 {% block content %}
 <div class="min-h-screen bg-gray-50 text-gray-800">
 
-  <nav  class="shadow" style="background:#0f172a; color: white; padding: 10px 20px;">
-   
+  <nav class="shadow" style="background:#0f172a; color: white; padding: 10px 20px;">
     <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
       <h1 class="text-2xl font-semibold text-align-left">BabyBeacon Dashboard</h1>
       <div class="flex space-x-4">
+        <a href="{% url 'statistics' %}" class="hover:underline">Statistics</a>
         <a href="{% url 'dashboard' %}" class="hover:underline">Dashboard</a>
         <a href="{% url 'logout' %}" class="hover:underline">Logout</a>
       </div>
     </div>
-   
   </nav>
 
   <div class="max-w-7xl mx-auto px-4 py-6 space-y-6">
-
+    
     <div id="alertBox" class="hidden bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
       <strong class="font-bold">Warning!</strong>
       <span class="block sm:inline" id="alertText">Threshold exceeded.</span>
@@ -28,6 +27,17 @@
       <div class="bg-white shadow-md rounded-lg p-6 text-center">
         <h2 class="text-gray-500 text-sm uppercase">Amplitude</h2>
         <p id="currentAmp" class="text-3xl font-semibold text-green-600">--</p>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-2 gap-4 mt-4">
+      <div class="bg-white shadow-md rounded-lg p-6 text-center">
+        <h2 class="text-gray-500 text-sm uppercase">Temperature Threshold (°C)</h2>
+        <input type="number" id="thresholdTempInput" value="25" class="border rounded px-2 py-1 w-1/2 text-center" />
+      </div>
+      <div class="bg-white shadow-md rounded-lg p-6 text-center">
+        <h2 class="text-gray-500 text-sm uppercase">Amplitude Threshold</h2>
+        <input type="number" id="thresholdAmpInput" value="500" class="border rounded px-2 py-1 w-1/2 text-center" />
       </div>
     </div>
 
@@ -48,7 +58,6 @@
 
 {% block extra_js %}
 <script src="https://cdn.tailwindcss.com"></script>
-
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
@@ -95,6 +104,16 @@ function appendChartData(labels, tempData, ampData) {
   ampChart.update();
 }
 
+let thresholdTemp = 30;
+let thresholdAmp = 8;
+
+document.getElementById('thresholdTempInput').addEventListener('input', (e) => {
+  thresholdTemp = parseFloat(e.target.value);
+});
+document.getElementById('thresholdAmpInput').addEventListener('input', (e) => {
+  thresholdAmp = parseFloat(e.target.value);
+});
+
 async function getLatestData() {
   try {
     const response = await fetch('/api/getLatestData/');
@@ -105,7 +124,9 @@ async function getLatestData() {
 
     const alertBox = document.getElementById('alertBox');
     const alertText = document.getElementById('alertText');
-    if (data.temperature_c > data.threshold_temp || data.amplitude > data.threshold_amp) {
+
+    // Use frontend-set thresholds
+    if (data.temperature_c > thresholdTemp || data.amplitude > thresholdAmp) {
       alertBox.classList.remove('hidden');
       alertText.textContent = `Alert: Threshold exceeded! Temp = ${data.temperature_c}°C, Amp = ${data.amplitude}`;
     } else {
@@ -119,9 +140,7 @@ async function getLatestData() {
 }
 
 initCharts();
-
 getLatestData();
 setInterval(getLatestData, 5000);
 </script>
 {% endblock %}
-
